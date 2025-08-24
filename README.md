@@ -9,7 +9,7 @@ $ [/path/to/]xshot.sh <output type> <selection type>
 ```
 
 The output type can be:
-- your clibpoard (`clipboard`), by piping the output to your clipboard
+- your clipboard (`clipboard`), by piping the output to your clipboard
   manager (xclip by default)
 - a file. See section below.
 
