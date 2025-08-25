@@ -12,12 +12,13 @@ FN_FORMAT=("$HOME/Pictures/Screenshots/Screenshot_%F@%R:%S.png")
 CLIP_OPTS=("xclip -selection clipboard -t image/png -i \$f")
 
 hprint() { # 'highlighted print' :)
-	# highlight the first chunk of the
-	# message and leave the rest unaltered
+	# highlight first chunk of the
+	# message
 	tput bold
 	printf "$1"
 	tput sgr0
 
+	# and leave the rest unaltered
 	printf "${*:2}"
 }
 
@@ -45,8 +46,7 @@ for i in $@; do
 			;;
 
 		"version" | "v")
-			hprint "X.Shot version 1.0a" \
-				", running with" \
+			hprint "X.Shot version 1.0a" ", running with" \
 				"\n$(scrot -v)." \
 				"\nWritten by ruby R53 on August 2025.\n"
 			;;
@@ -72,11 +72,14 @@ done
 
 # and finally, run the requested command
 # altogether
-scrot "${SCROTARGS[@]}"
+[[ $1 != "help" ]] && [[ $1 != "h" ]] &&
+	scrot "${SCROTARGS[@]}"
 
 # then, clean stuff up if we're saving to the
 # clipboard only
-[[ -z $(echo $@ | grep file) ]] && rm $(pwd)/*_scrot.png
+[[ $1 != "help" ]] && [[ $1 != "h" ]] &&
+	[[ -z $(echo $@ | grep file) ]] &&
+	rm $(pwd)/*_scrot.png
 # this allows the user to combine both
 # 'file' and 'clipboard' so that they
 # can save to 2 locations at once
