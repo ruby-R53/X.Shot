@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -eu
-
 # default scrot arguments:
 # freeze, include mouse pointer, maximum quality & no compression
 SCROTARGS=(-f -p -q 100 -Z 0)
@@ -26,25 +24,36 @@ for i in $@; do
 	case $i in
 		"clipboard" | "c") # saving to clipboard?
 			SCROTARGS+=(-e "${CLIP_OPTS[@]}")
+			# check if user called for actually taking
+			# a screenshot
+			SHOOT=true
 			;;
 
 		"file" | "f") # saving to a file?
 			SCROTARGS+=(-F "${FN_FORMAT[@]}")
+			SHOOT=true
 			;;
 		
 		"select" | "s") # screenshooting an area?
 			SCROTARGS+=(-s)
+			SHOOT=true
 			;;
 
 		"window" | "w") # screenshooting active window?
 			SCROTARGS+=(-u)
+			SHOOT=true
 			;;
 
 		"screen" | "S") # screenshooting the whole screen?
 			# this is scrot's default, nothing needs
 			# to be done here
+			SHOOT=true
 			;;
+	esac
+done
 
+if [[ ! $SHOOT ]]; then
+	case $1 in
 		"version" | "v")
 			hprint "X.Shot version 1.0a" ", running with" \
 				"\n$(scrot -v)." \
@@ -68,17 +77,16 @@ for i in $@; do
 			[[ $1 != "help" ]] && [[ $1 != "h" ]] && exit 1
 			;;
 	esac
-done
+fi
 
 # and finally, run the requested command
 # altogether
-[[ $1 != "help" ]] && [[ $1 != "h" ]] &&
+[[ $SHOOT ]] &&
 	scrot "${SCROTARGS[@]}"
 
 # then, clean stuff up if we're saving to the
 # clipboard only
-[[ $1 != "help" ]] && [[ $1 != "h" ]] &&
-	[[ -z $(echo $@ | grep file) ]] &&
+[[ $SHOOT ]] && [[ -z $(echo $@ | grep file) ]] &&
 	rm $(pwd)/*_scrot.png
 # this allows the user to combine both
 # 'file' and 'clipboard' so that they
